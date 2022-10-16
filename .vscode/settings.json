@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        ".git": true,
+        ".vscode": true,
+        ".terraform": true,
+        "terraform.tfstate": true,
+        ".terraform.lock.hcl": true
+    }
+}
