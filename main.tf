@@ -112,6 +112,7 @@ resource "aws_codebuild_project" "codebuild_project" {
 	name = "hello"
 	build_timeout = 120
 	service_role = aws_iam_role.iam_role.arn
+	depends_on = [ aws_ecr_repository.ecr_repository ]
 
 	artifacts {
 	  type = "NO_ARTIFACTS"
@@ -166,6 +167,17 @@ resource "aws_codebuild_project" "codebuild_project" {
 			status = "DISABLED"
 		}
 	}
+}
+
+# CodeBuild: Trigger
+resource "null_resource" "codebuild_trigger_build" {
+	provisioner "local-exec" {
+		command = "aws codebuild start-build --project-name hello"
+	}
+	triggers = {
+		always_run = "${timestamp()}"
+	}
+	depends_on = [ aws_codebuild_project.codebuild_project ]
 }
 
 # ECS
