@@ -55,41 +55,41 @@ resource "aws_db_subnet_group" "rds_public_subnet_group" {
 }
 
 # RDS ( Primary )
-# resource "aws_db_instance" "rds_primary" {
-# 	identifier = "rds-primary"
-# 	engine = "mysql"
-# 	db_name = "hello_db"
-# 	username = "hello_db"
-# 	password = "hello_db"
-# 	allocated_storage = 5
-# 	engine_version = 5.7
-# 	skip_final_snapshot = true
-# 	backup_retention_period = 7
-# 	instance_class = "db.t2.micro"
-# 	db_subnet_group_name = "rds-public-subnet-group"
-# 	depends_on = [ aws_db_subnet_group.rds_public_subnet_group ]
-# 	availability_zone = data.aws_availability_zones.availability_zones.names[0]
+resource "aws_db_instance" "rds_primary" {
+	identifier = "rds-primary"
+	engine = "mysql"
+	db_name = "hello_db"
+	username = "hello_db"
+	password = "hello_db"
+	allocated_storage = 5
+	engine_version = 5.7
+	skip_final_snapshot = true
+	backup_retention_period = 7
+	instance_class = "db.t2.micro"
+	db_subnet_group_name = "rds-public-subnet-group"
+	depends_on = [ aws_db_subnet_group.rds_public_subnet_group ]
+	availability_zone = data.aws_availability_zones.availability_zones.names[0]
 
-# 	tags = {
-# 		Name = "rds-primary"
-# 		PROJECT = "IAAC-TF"
-# 	}
-# }
+	tags = {
+		Name = "rds-primary"
+		PROJECT = "IAAC-TF"
+	}
+}
 
-# # RDS ( Replica )
-# resource "aws_db_instance" "rds-secondary" {
-# 	identifier = "rds-secondary"
-# 	skip_final_snapshot = true
-# 	instance_class = "db.t2.micro"
-# 	replicate_source_db = "${aws_db_instance.rds_primary.identifier}"
-# 	availability_zone = data.aws_availability_zones.availability_zones.names[1]
-# 	depends_on = [ aws_db_subnet_group.rds_public_subnet_group, aws_db_instance.rds_primary ]
+# RDS ( Replica )
+resource "aws_db_instance" "rds-secondary" {
+	identifier = "rds-secondary"
+	skip_final_snapshot = true
+	instance_class = "db.t2.micro"
+	replicate_source_db = "${aws_db_instance.rds_primary.identifier}"
+	availability_zone = data.aws_availability_zones.availability_zones.names[1]
+	depends_on = [ aws_db_subnet_group.rds_public_subnet_group, aws_db_instance.rds_primary ]
 
-# 	tags = {
-# 		Name = "rds-secondary"
-# 		PROJECT = "IAAC-TF"
-# 	}
-# }
+	tags = {
+		Name = "rds-secondary"
+		PROJECT = "IAAC-TF"
+	}
+}
 
 # ECR
 resource "aws_ecr_repository" "ecr_repository" {
@@ -179,6 +179,3 @@ resource "null_resource" "codebuild_trigger_build" {
 	}
 	depends_on = [ aws_codebuild_project.codebuild_project ]
 }
-
-# ECS
-# resource "aws_ecs_cluster" "" {}
